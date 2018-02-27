@@ -1,8 +1,10 @@
-import { Component, ViewChild, ElementRef, NgZone} from "@angular/core"
+import { Component, ViewChild, ElementRef, NgZone} from "@angular/core";
 import { GroceryListService } from "../../shared/grocery/grocery-list.service";
 import { Grocery } from "../../shared/grocery/grocery";
 import { TextField } from 'ui/text-field'; 
 import * as SocialShare from 'nativescript-social-share'
+import { SharedService } from "../../shared/shared.service";
+import { Router } from "@angular/router";
 
 @Component({
     selector: 'list',
@@ -20,7 +22,9 @@ export class ListComponent {
 
   constructor(
     private groceryListService: GroceryListService,
-    private zone: NgZone){}
+    private zone: NgZone,
+    private sharedService: SharedService,
+    private router: Router){}
 
   ngOnInit() {
       this.isLoading = true;
@@ -58,6 +62,14 @@ export class ListComponent {
         }
       )
   }
+
+  clickOnItem(grocery: Grocery){
+    console.log('Click on: ', grocery.name);
+    this.sharedService.pageUrl = `https://www.google.com/search?q=${grocery.name}`;
+    this.router.navigate(["/webview"])
+
+  }
+
 
   delete(grocery: Grocery) {
     this.groceryListService.delete(grocery.id)

@@ -4,13 +4,22 @@ import { Observable } from "rxjs/Observable";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/do";
 import "rxjs/add/operator/map";
+import { getString, setString } from "application-settings";
 
-import { User } from "./user";
-import { Config } from "../config";
+import { User } from "./user/user";
+import { Config } from "./config";
 
 @Injectable()
-export class UserService {
+export class AuthService {
   constructor(private http: Http) {}
+
+
+  getCommonHeaders() {
+    let headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", Config.authHeader);
+    return headers;
+  }
 
   register(user: User) {
     return this.http.post(
@@ -36,16 +45,25 @@ export class UserService {
     )
     .map(response => response.json())
     .do(data => {
-      Config.token = data._kmd.authtoken
+      this.token = data._kmd.authtoken
     })
     .catch(this.handleErrors);
   }
 
-  getCommonHeaders() {
-    let headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    headers.append("Authorization", Config.authHeader);
-    return headers;
+  isLoggedIn(): boolean {
+    return !!getString("token");
+  }
+
+  get token(): string {
+    return getString("token");
+  }
+
+  set token(theToken: string) {
+    setString("token", theToken);
+  }
+
+  logoff() {
+    this.token = '';
   }
 
   handleErrors(error: Response) {

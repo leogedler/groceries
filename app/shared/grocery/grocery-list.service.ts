@@ -1,3 +1,4 @@
+import { AuthService } from './../auth.service';
 import { Injectable } from "@angular/core";
 import { Http, Headers, Response, URLSearchParams } from "@angular/http";
 import { Observable } from "rxjs/Observable";
@@ -11,7 +12,9 @@ import { Grocery } from "./grocery";
 export class GroceryListService {
   baseUrl = Config.apiUrl + "appdata/" + Config.appKey + "/Groceries";
 
-  constructor(private http: Http) {}
+  constructor(
+    private http: Http,
+    private authService: AuthService) {}
 
   load() {
     // Kinvey-specific syntax to sort the groceries by last modified time. Don’t worry about the details here.
@@ -58,7 +61,7 @@ export class GroceryListService {
   getCommonHeaders() {
     let headers = new Headers();
     headers.append("Content-Type", "application/json");
-    headers.append("Authorization", "Kinvey " + Config.token);
+    headers.append("Authorization", "Kinvey " + this.authService.token);
     return headers;
   }
 

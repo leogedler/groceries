@@ -1,18 +1,17 @@
 import { Component, OnInit, ElementRef, ViewChild } from "@angular/core";
 import { User } from '../../shared/user/user';
-import { UserService } from "../../shared/user/user.service";
-import { Router } from "@angular/router";
 import { Page } from "ui/page";
 import { Color } from "color";
 import { View } from "ui/core/view";
 import { TextField } from 'ui/text-field';
 import { setHintColor } from "../../utils/hint-util";
+import { RouterExtensions } from "nativescript-angular/router";
+import { AuthService } from "../../shared/auth.service";
 
 @Component({
   selector: "my-app",
   templateUrl: 'pages/login/login.html',
-  styleUrls: ['pages/login/login-common.css', 'pages/login/login.css'],
-  providers: [UserService]
+  styleUrls: ['pages/login/login-common.css', 'pages/login/login.css']
 })
 export class LoginComponent implements OnInit {
   isLoggingIn: boolean = true;
@@ -22,9 +21,9 @@ export class LoginComponent implements OnInit {
   @ViewChild('password') password: ElementRef;
 
   constructor(
-    private userService: UserService,
-    private router: Router,
-    private page: Page
+    private authService: AuthService,
+    private page: Page,
+    private nav: RouterExtensions
   ){
     this.user = new User();
     this.user.email = 'leogedler@hotmail.com';
@@ -60,13 +59,13 @@ export class LoginComponent implements OnInit {
   }
 
   login(){
-    this.userService.login(this.user).subscribe(()=>{
-        this.router.navigate(["/list"]);
+    this.authService.login(this.user).subscribe(()=>{
+        this.nav.navigate(["/list"], { clearHistory: true });
     },(error)=> alert("Unfortunately we could noy find your account."))
   }
 
   signUp() {
-    this.userService.register(this.user)
+    this.authService.register(this.user)
       .subscribe(
         () => {
           alert("Your account was successfully created.");

@@ -6,6 +6,9 @@ import { NativeScriptRouterModule } from "nativescript-angular/router";
 
 import { AppComponent } from "./app.component";
 import { routes, navigatableComponents } from "./app.routing";
+import { SharedService } from "./shared/shared.service";
+import { AuthService } from "./shared/auth.service";
+import { AuthGuard } from "./shared/auth.guard";
 
 @NgModule({
   imports: [
@@ -19,6 +22,11 @@ import { routes, navigatableComponents } from "./app.routing";
     AppComponent,
     ...navigatableComponents
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  providers: [
+    AuthService,
+    SharedService,
+    AuthGuard
+  ]
 })
 export class AppModule {}
